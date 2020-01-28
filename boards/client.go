@@ -24,27 +24,41 @@ func NewClient() (*Client, error) {
     return &Client{sh}, nil
 }
 
+func drainReader(r io.ReadCloser) {
+    io.Copy(ioutil.Discard, r)
+    r.Close()
+}
+
 func (c *Client) GetPost(ref string) (*Post, error) {
     r, err := c.shell.Cat(ref)
     if err != nil {
         err = fmt.Errorf("boards: failed to cat ipfs post: %w", err)
         return nil, err
     }
-    defer func() {
-        io.Copy(ioutil.Discard, r)
-        r.Close()
-    }()
+    defer drainReader(r)
     var p Post
     err = json.NewDecoder(r).Decode(&p)
     if err != nil {
         err = fmt.Errorf("boards: failed to decode post from json: %w", err)
         return nil, err
     }
+    r, err = c.shell.Cat(p.Content)
+    if err != nil {
+        err = fmt.Errorf("boards: failed to cat ipfs post content: %w", err)
+        return nil, err
+    }
+    content, err := ioutil.ReadAll(r)
+    if err != nil {
+        err = fmt.Errorf("boards: failed to read ipfs post content: %w", err)
+        return nil, err
+    }
+    r.Close()
+    p.Content = string(content)
     return &p, nil
 }
 
 func (c *Client) PutPost(topic, title, thread, content string) (string, error) {
-    p, err := newPost(topic, title, thread)
+    p, err := newPost(topic, title, thread, content)
     if err != nil {
         return "", err
     }
