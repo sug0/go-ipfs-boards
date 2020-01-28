@@ -57,18 +57,18 @@ func (c *Client) GetPost(ref string) (*Post, error) {
     return &p, nil
 }
 
-func (c *Client) PutPost(topic, title, thread, content string) (string, error) {
-    p, err := newPost(topic, title, thread, content)
+func (c *Client) PutPost(p Post) (string, error) {
+    err := p.validate()
     if err != nil {
         return "", err
     }
-    ref, err := c.putContent(content)
+    ref, err := c.putContent(p.Content)
     if err != nil {
         return "", err
     }
     p.Content = ref
     var buf bytes.Buffer
-    err = json.NewEncoder(&buf).Encode(p)
+    err = json.NewEncoder(&buf).Encode(&p)
     if err != nil {
         err = fmt.Errorf("boards: failed to encode post into json: %w", err)
         return "", err

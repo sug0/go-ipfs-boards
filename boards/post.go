@@ -27,28 +27,51 @@ type Post struct {
     Posted   string
 }
 
-func newPost(topic, title, thread, content string) (*Post, error) {
-    if utf8.RuneCountInString(topic) > topicMaxLen {
+func (p *Post) validate() error {
+    // validate default values
+    if p.Protocol != "" {
+        err := fmt.Errorf("boards: protocol field should be filled automatically")
+        return err
+    }
+    if p.Version != "" {
+        err := fmt.Errorf("boards: version field should be filled automatically")
+        return err
+    }
+    if p.Posted != "" {
+        err := fmt.Errorf("boards: posted field should be filled automatically")
+        return err
+    }
+
+    // validate post kinds
+    if p.Title == "" && (p.Thread == "" || p.Topic != "") {
+        err := fmt.Errorf("boards: malformed reply post")
+        return err
+    }
+    if p.Title != "" && (p.Thread != "" || p.Topic == "") {
+        err := fmt.Errorf("boards: malformed op post")
+        return err
+    }
+
+    // validate content length
+    if utf8.RuneCountInString(p.Topic) > topicMaxLen {
         err := fmt.Errorf("boards: topic length exceeded %d", topicMaxLen)
-        return nil, err
+        return err
     }
-    if utf8.RuneCountInString(title) > titleMaxLen {
+    if utf8.RuneCountInString(p.Title) > titleMaxLen {
         err := fmt.Errorf("boards: title length exceeded %d", titleMaxLen)
-        return nil, err
+        return err
     }
-    if utf8.RuneCountInString(content) > contentMaxLen {
+    if utf8.RuneCountInString(p.Content) > contentMaxLen {
         err := fmt.Errorf("boards: content length exceeded %d", contentMaxLen)
-        return nil, err
+        return err
     }
-    return &Post{
-        Protocol: protocol,
-        Version: version,
-        Topic: topic,
-        Title: title,
-        Thread: thread,
-        Content: content,
-        Posted: timeNow(),
-    }, nil
+
+    // fill remaining fields
+    p.Protocol = protocol
+    p.Version = version
+    p.Posted = timeNow()
+
+    return nil
 }
 
 func timeNow() string {

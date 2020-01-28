@@ -11,12 +11,10 @@ func main() {
     if err != nil {
         panic(err)
     }
-    ref, err := c.PutPost(
-        "random",                // topic (analogous to board)
-        "this is a test post",   // thread title
-        "",                      // empty because this is OP
-        "this is an IPFS post!", // post content
-    )
+    ref, err := c.PutPost(boards.Post{
+        Thread: "QmQx3tUXcjd4YK3xLuWQEaoLu753RU7o4JgDYA4JXKRtSS",
+        Content: "Hello there, I am a test reply! :D",
+    })
     if err != nil {
         panic(err)
     }
