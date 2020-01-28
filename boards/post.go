@@ -20,7 +20,7 @@ const (
 type Post struct {
     Protocol string
     Version  string
-    Topic    string
+    Topic    string `json:",omitempty"`
     Title    string `json:",omitempty"`
     Thread   string `json:",omitempty"`
     Content  string
