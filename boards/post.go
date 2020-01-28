@@ -17,14 +17,14 @@ type Post struct {
     Posted   string
 }
 
-func NewPost(topic, title, thread, content string) (*Post, error) {
+func newPost(topic, title, thread string) (*Post, error) {
+    // TODO: check character limits?
     return &Post{
         Protocol: protocol,
         Version: version,
         Topic: topic,
         Title: title,
         Thread: thread,
-        Content: content,
         Posted: timeNow(),
     }, nil
 }

@@ -19,15 +19,6 @@ func NewClient() *Client {
     return &Client{ipfs.NewLocalShell()}
 }
 
-func (c *Client) PutContent(content string) (string, error) {
-    ref, err := c.shell.Add(strings.NewReader(content))
-    if err != nil {
-        err = fmt.Errorf("boards: failed to add content to ipfs: %w", err)
-        return "", err
-    }
-    return ref, nil
-}
-
 func (c *Client) GetPost(ref string) (*Post, error) {
     r, err := c.shell.Cat(ref)
     if err != nil {
@@ -47,16 +38,34 @@ func (c *Client) GetPost(ref string) (*Post, error) {
     return &p, nil
 }
 
-func (c *Client) PutPost(p *Post) (string, error) {
+func (c *Client) PutPost(topic, title, thread, content string) (string, error) {
+    p, err := newPost(topic, title, thread)
+    if err != nil {
+        return "", err
+    }
+    ref, err := c.putContent(content)
+    if err != nil {
+        return "", err
+    }
+    p.Content = ref
     var buf bytes.Buffer
-    err := json.NewEncoder(&buf).Encode(p)
+    err = json.NewEncoder(&buf).Encode(p)
     if err != nil {
         err = fmt.Errorf("boards: failed to encode post into json: %w", err)
         return "", err
     }
-    ref, err := c.shell.Add(&buf)
+    ref, err = c.shell.Add(&buf)
     if err != nil {
         err = fmt.Errorf("boards: failed to add post to ipfs: %w", err)
+        return "", err
+    }
+    return ref, nil
+}
+
+func (c *Client) putContent(content string) (string, error) {
+    ref, err := c.shell.Add(strings.NewReader(content))
+    if err != nil {
+        err = fmt.Errorf("boards: failed to add content to ipfs: %w", err)
         return "", err
     }
     return ref, nil
