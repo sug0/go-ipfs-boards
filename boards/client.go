@@ -15,8 +15,13 @@ type Client struct {
     shell *ipfs.Shell
 }
 
-func NewClient() *Client {
-    return &Client{ipfs.NewLocalShell()}
+func NewClient() (*Client, error) {
+    sh := ipfs.NewLocalShell()
+    if sh == nil {
+        err := fmt.Errorf("boards: ipfs daemon is offline")
+        return nil, err
+    }
+    return &Client{sh}, nil
 }
 
 func (c *Client) GetPost(ref string) (*Post, error) {

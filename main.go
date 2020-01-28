@@ -7,7 +7,10 @@ import (
 )
 
 func main() {
-    c := boards.NewClient()
+    c, err := boards.NewClient()
+    if err != nil {
+        panic(err)
+    }
     ref, err := c.PutPost(
         "random",                // topic (analogous to board)
         "this is a test post",   // thread title
