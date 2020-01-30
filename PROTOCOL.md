@@ -38,4 +38,4 @@ The `PubKey` being pointed to is another JSON object, described below:
 | `Scheme` | `string` | The cryptographic scheme used (e.g. RSA). |
 | `Format` | `string` | The format the public key is serialized in. |
 
-__TODO__ - specify the range of values accepted by `Format` and `Cipher`.
+__TODO__ - specify the range of values accepted by `Format` and `Scheme`.
