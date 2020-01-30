@@ -39,21 +39,25 @@ level protocol. The range of values accepted by `Format` is:
 
 ### Example OP post
 
-    {
-      "Protocol": "IPFS-TXT",
-      "Version": "0.1.1",
-      "Topic": "random",
-      "Title": "this is a test post",
-      "Content": "Qmb7zrAvYTU1BuJmS3iQE5aiVDy4hnbU79ecX38LZyapQg",
-      "Posted": "2020-01-28T16:34:06.782205017Z"
-    }
+```json
+{
+  "Protocol": "IPFS-TXT",
+  "Version": "0.1.1",
+  "Topic": "random",
+  "Title": "this is a test post",
+  "Content": "Qmb7zrAvYTU1BuJmS3iQE5aiVDy4hnbU79ecX38LZyapQg",
+  "Posted": "2020-01-28T16:34:06.782205017Z"
+}
+```
 
 ### Example reply post
 
-    {
-      "Protocol": "IPFS-TXT",
-      "Version": "0.1.1",
-      "Thread": "QmQx3tUXcjd4YK3xLuWQEaoLu753RU7o4JgDYA4JXKRtSS",
-      "Content": "QmamT2wEV539P7fR5AHSwNoNRMfaJ8S1MhK7eK5M66Zx9k",
-      "Posted": "2020-01-28T16:57:26.194976382Z"
-    }
+```json
+{
+  "Protocol": "IPFS-TXT",
+  "Version": "0.1.1",
+  "Thread": "QmQx3tUXcjd4YK3xLuWQEaoLu753RU7o4JgDYA4JXKRtSS",
+  "Content": "QmamT2wEV539P7fR5AHSwNoNRMfaJ8S1MhK7eK5M66Zx9k",
+  "Posted": "2020-01-28T16:57:26.194976382Z"
+}
+```
