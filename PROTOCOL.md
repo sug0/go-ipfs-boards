@@ -6,7 +6,7 @@ actual text content published by a user. Optionally, individual textboards may
 choose to validate posts out in the wild, using a cryptographic signature (e.g. RSA)
 of the post content's CID.
 
-## Post format
+## Post format for version `0.1.1`
 
 The post is a JSON object, with the following fields:
 
@@ -36,4 +36,3 @@ level protocol. The range of values accepted by `Format` is:
 * `hex` - hexadecimal encoding
 * `base64` - base64 encoding
 * `base58` - base58 encoding
-* `bin` - raw binary encoding
