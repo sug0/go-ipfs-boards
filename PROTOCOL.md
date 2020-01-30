@@ -26,14 +26,15 @@ certain textboard authorities, following a semi-decentralized architecture:
 
 | Field | Type | Description |
 | :--- | :---: | :--- |
-| `Signature` | `string` | The resulting signature, formatted in hexadecimal. |
-| `PubKey` | `object` | The public key object. |
+| `Signature` | `string` | The resulting signature. |
+| `Format` | `string` | The format the signature is serialized in. |
+| `PubKey` | `string` | The content ID hash pointing to the public key. |
 
-The `PubKey` field is described below:
+The `PubKey` being pointed to is described below:
 
 | Field | Type | Description |
 | :--- | :---: | :--- |
-| `CID` | `string` | The content ID hash pointing to the public key. |
+| `Data` | `string` | The serialized public key. |
 | `Scheme` | `string` | The cryptographic scheme used (e.g. RSA). |
 | `Format` | `string` | The format the public key is serialized in. |
 
