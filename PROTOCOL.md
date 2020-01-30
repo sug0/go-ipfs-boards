@@ -30,7 +30,7 @@ certain textboard authorities, following a semi-decentralized architecture:
 | `Signature` | `string` | The resulting signature. |
 | `Format` | `string` | The format the signature is serialized in. |
 
-The retrieval of the public key used to verify the signatured should be handed to a higher
+The retrieval of the public key used to verify the signature should be handed to a higher
 level protocol.
 
 __TODO__ - specify the range of values accepted by `Format` and `Scheme`.
