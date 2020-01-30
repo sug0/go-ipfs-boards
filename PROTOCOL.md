@@ -31,6 +31,9 @@ certain textboard authorities, following a semi-decentralized architecture:
 | `Format` | `string` | The format the signature is serialized in. |
 
 The retrieval of the public key used to verify the signature should be handed to a higher
-level protocol.
+level protocol. The range of values accepted by `Format` is:
 
-__TODO__ - specify the range of values accepted by `Format` and `Scheme`.
+* `hex` - hexadecimal encoding
+* `base64` - base64 encoding
+* `base58` - base58 encoding
+* `bin` - raw binary encoding
