@@ -12,9 +12,9 @@ const (
 )
 
 const (
-    topicMaxLen   = 50
-    titleMaxLen   = 250
-    contentMaxLen = 1500
+    topicMaxLen   = 64
+    titleMaxLen   = 256
+    contentMaxLen = 1024
 )
 
 type Post struct {
