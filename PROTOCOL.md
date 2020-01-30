@@ -11,7 +11,7 @@ of the post content's CID.
 The post is a JSON object, with the following fields:
 
 | Field | Type | Optional | Description |
-| :--- | :---: | :---: | ---: |
+| :--- | :---: | :---: | :--- |
 | `Protocol` | `string` | `false` | Constant value `IPFS-TXT`. |
 | `Version` | `string` | `false` | The protocol version. |
 | `Topic` | `string` | `true` | Analogous to the board, in other software; formmated in UTF-8. Only optional if not OP, otherwise ignored. |
@@ -25,14 +25,14 @@ The `Auth` field can be used to identify posts that have been validated by
 certain textboard authorities, following a semi-decentralized architecture:
 
 | Field | Type | Description |
-| :--- | :---: | ---: |
+| :--- | :---: | :--- |
 | `Signature` | `string` | The resulting signature, formatted in hexadecimal. |
 | `PubKey` | `object` | The public key object. |
 
 The `PubKey` field is described below:
 
 | Field | Type | Description |
-| :--- | :---: | ---: |
+| :--- | :---: | :--- |
 | `CID` | `string` | The content ID hash pointing to the public key. |
 | `Scheme` | `string` | The cryptographic scheme used (e.g. RSA). |
 | `Format` | `string` | The format the public key is serialized in. |
