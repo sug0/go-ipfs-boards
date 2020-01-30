@@ -26,7 +26,7 @@ certain textboard authorities, following a semi-decentralized architecture:
 
 | Field | Type | Description |
 | :--- | :---: | :--- |
-| `Node` | `string` | Node identifier for the textboard in question. |
+| `Node` | `string` | IPFS node identifier for the textboard in question. |
 | `Signature` | `string` | The resulting signature. |
 | `Format` | `string` | The format the signature is serialized in. |
 
