@@ -30,7 +30,7 @@ certain textboard authorities, following a semi-decentralized architecture:
 | `Format` | `string` | The format the signature is serialized in. |
 | `PubKey` | `string` | The content ID hash pointing to the public key. |
 
-The `PubKey` being pointed to is described below:
+The `PubKey` being pointed to is another JSON object, described below:
 
 | Field | Type | Description |
 | :--- | :---: | :--- |
