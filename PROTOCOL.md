@@ -26,16 +26,11 @@ certain textboard authorities, following a semi-decentralized architecture:
 
 | Field | Type | Description |
 | :--- | :---: | :--- |
+| `Node` | `string` | Node identifier for the textboard in question. |
 | `Signature` | `string` | The resulting signature. |
 | `Format` | `string` | The format the signature is serialized in. |
-| `PubKey` | `string` | The content ID hash pointing to the public key. |
 
-The `PubKey` being pointed to is another JSON object, described below:
-
-| Field | Type | Description |
-| :--- | :---: | :--- |
-| `Data` | `string` | The serialized public key. |
-| `Scheme` | `string` | The cryptographic scheme used (e.g. RSA). |
-| `Format` | `string` | The format the public key is serialized in. |
+The retrieval of the public key used to verify the signatured should be handed to a higher
+level protocol.
 
 __TODO__ - specify the range of values accepted by `Format` and `Scheme`.
