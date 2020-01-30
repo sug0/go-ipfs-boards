@@ -1,4 +1,4 @@
-# WIP -- The IPFS Textboard protocol
+# WIP - The IPFS Textboard protocol
 
 This is a textual protocol based on the [JSON](https://www.json.org/) standard.
 Posts are objects comprised of metadata, with a field containing the CID of the
@@ -37,4 +37,4 @@ The `PubKey` field is described below:
 | `Scheme` | `string` | The cryptographic scheme used (e.g. RSA). |
 | `Format` | `string` | The format the public key is serialized in. |
 
-__TODO__ -- specify the range of values accepted by `Format` and `Cipher`.
+__TODO__ - specify the range of values accepted by `Format` and `Cipher`.
