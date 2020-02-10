@@ -14,15 +14,17 @@ The post is a JSON object, with the following fields:
 | :--- | :---: | :---: | :--- |
 | `Protocol` | `string` | `false` | Constant value `IPFS-TXT`. |
 | `Version` | `string` | `false` | The protocol version. |
-| `Topic` | `string` | `true` | Analogous to the board, in other software; formmated in UTF-8; should not exceed 64 characters. Only optional if not OP, otherwise ignored. |
-| `Title` | `string` | `true` | The title of the OP, formatted in UTF-8; should not exceed 256 characters. Only optional if not OP, otherwise ignored. |
+| `Topic` | `string` | `true` | Analogous to the board, in other software; formmated in UTF-8. Only optional if not OP, otherwise ignored. |
+| `Title` | `string` | `true` | The title of the OP, formatted in UTF-8. Only optional if not OP, otherwise ignored. |
 | `Thread` | `string` | `true` | The thread being replied to. Only optional if OP, otherwise ignored. |
-| `Content` | `string` | `false` | The content ID hash pointing to the post's text formatted in UTF-8; should not exceed 1024 characters. |
+| `Content` | `string` | `false` | The content ID hash pointing to the post's text formatted in UTF-8. |
 | `Posted` | `string` | `false` | The post date, as an RFC3339Nano time string. |
 | `Auth` | `object` | `true` | Authentication parameters. Explained below. |
 
-The `Auth` field can be used to identify posts that have been validated by
-certain textboard authorities, following a semi-decentralized architecture:
+The character limits of the `Topic`, `Title` and `Content` should be left to the
+text board authority to decide. The `Auth` field can be used to identify posts
+that have been validated by certain textboard authorities, following a
+decentralized architecture:
 
 | Field | Type | Description |
 | :--- | :---: | :--- |
