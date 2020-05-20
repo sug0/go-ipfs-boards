@@ -3,12 +3,16 @@ package boards
 import (
     "fmt"
     "time"
+    "strings"
+    "unicode"
     "unicode/utf8"
 )
 
 const (
     protocol = "IPFS-TXT"
-    version  = "0.1.1"
+    version  = "0.1.2"
+
+    pubsubPrefix = "/" + protocol + "/" + version + "/boards"
 )
 
 const (
@@ -18,13 +22,14 @@ const (
 )
 
 type Post struct {
-    Protocol string
-    Version  string
-    Topic    string `json:",omitempty"`
-    Title    string `json:",omitempty"`
-    Thread   string `json:",omitempty"`
-    Content  string
-    Posted   string
+    Extensions map[string]interface{}
+    Protocol   string
+    Version    string
+    Topic      string `json:",omitempty"`
+    Title      string `json:",omitempty"`
+    Thread     string `json:",omitempty"`
+    Content    string
+    Posted     string
 }
 
 func (p *Post) validate() error {
@@ -52,8 +57,18 @@ func (p *Post) validate() error {
         return err
     }
 
-    // validate content length
-    if utf8.RuneCountInString(p.Topic) > topicMaxLen {
+    // validate content length and other stuff
+    var size int
+    for i := 0; i < len(p.Topic); i++ {
+        r, n := utf8.DecodeRuneInString(p.Topic[i:])
+        if unicode.IsSpace(r) {
+            err := fmt.Errorf("boards: topic mustn't contain spaces")
+            return err
+        }
+        i += n
+        size++
+    }
+    if size > topicMaxLen {
         err := fmt.Errorf("boards: topic length exceeded %d", topicMaxLen)
         return err
     }

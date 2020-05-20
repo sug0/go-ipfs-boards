@@ -6,7 +6,7 @@ actual text content published by a user. Optionally, individual textboards may
 choose to validate posts out in the wild, using a cryptographic signature (e.g. RSA)
 of the post content's CID.
 
-## Post format for version `0.1.1`
+## Post format for version `0.1.2`
 
 The post is a JSON object, with the following fields:
 
@@ -19,47 +19,16 @@ The post is a JSON object, with the following fields:
 | `Thread` | `string` | `true` | The thread being replied to. Required if OP. |
 | `Content` | `string` | `false` | The content ID hash pointing to the post's text formatted in UTF-8. |
 | `Posted` | `string` | `false` | The post date, as an RFC3339Nano time string. |
-| `Auth` | `object` | `true` | Authentication parameters. Explained below. |
+| `Extensions` | `object` | `true` | Application defined extensions. |
 
 The character limits of the `Topic`, `Title` and `Content` should be left to the
-text board authority to decide. The `Auth` field can be used to identify posts
-that have been validated by certain textboard authorities, following a
-decentralized architecture:
-
-| Field | Type | Description |
-| :--- | :---: | :--- |
-| `Node` | `string` | IPFS node identifier for the textboard in question. |
-| `Signature` | `string` | The resulting signature. |
-| `Format` | `string` | The format the signature is serialized in. |
-
-The retrieval of the public key used to verify the signature should be handed to a higher
-level protocol. The range of values accepted by `Format` is:
-
-* `hex` - hexadecimal encoding
-* `base64` - base64 encoding
-* `base58` - base58 encoding
+text board authority to decide. The `Extensions` field can be used to implement
+domain specific extensions, such as ~~tripfagging~~.
 
 ### Example OP post
 
-```json
-{
-  "Protocol": "IPFS-TXT",
-  "Version": "0.1.1",
-  "Topic": "random",
-  "Title": "this is a test post",
-  "Content": "Qmb7zrAvYTU1BuJmS3iQE5aiVDy4hnbU79ecX38LZyapQg",
-  "Posted": "2020-01-28T16:34:06.782205017Z"
-}
-```
+TODO
 
 ### Example reply post
 
-```json
-{
-  "Protocol": "IPFS-TXT",
-  "Version": "0.1.1",
-  "Thread": "QmQx3tUXcjd4YK3xLuWQEaoLu753RU7o4JgDYA4JXKRtSS",
-  "Content": "QmamT2wEV539P7fR5AHSwNoNRMfaJ8S1MhK7eK5M66Zx9k",
-  "Posted": "2020-01-28T16:57:26.194976382Z"
-}
-```
+TODO

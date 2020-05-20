@@ -47,12 +47,12 @@ func (c *Client) GetPost(ref string) (*Post, error) {
         err = fmt.Errorf("boards: failed to cat ipfs post content: %w", err)
         return nil, err
     }
+    defer drainReader(r)
     content, err := ioutil.ReadAll(r)
     if err != nil {
         err = fmt.Errorf("boards: failed to read ipfs post content: %w", err)
         return nil, err
     }
-    r.Close()
     p.Content = string(content)
     return &p, nil
 }
@@ -78,7 +78,15 @@ func (c *Client) PutPost(p Post) (string, error) {
         err = fmt.Errorf("boards: failed to add post to ipfs: %w", err)
         return "", err
     }
+    go c.advertise(p.Topic, ref)
     return ref, nil
+}
+
+func (c *Client) advertise(topic, ref string) {
+    subTopics := append([]string{pubsubPrefix}, strings.Split(topic, "/")...)
+    for i := 1; i < len(subTopics); i++ {
+        go c.shell.PubSubPublish(strings.Join(subTopics[:i], "/"), ref)
+    }
 }
 
 func (c *Client) putContent(content string) (string, error) {
