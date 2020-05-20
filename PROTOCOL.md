@@ -27,8 +27,25 @@ domain specific extensions, such as ~~tripfagging~~.
 
 ### Example OP post
 
-TODO
+```json
+{
+  "Topic": "b",
+  "Title": "I'm new here",
+  "Protocol": "IPFS-TXT",
+  "Version": "0.1.2",
+  "Content": "QmWicCsiZuBdLPksfaj3qT6akFvHskwNDHSQSM3MLF1GRX",
+  "Posted": "2020-05-21T00:04:24.3095002+01:00"
+}
+```
 
 ### Example reply post
 
-TODO
+```json
+{
+  "Thread": "QmPoZs6qaPVzCJTonnjPYifYbCM7Zn5nzsYwUyuQ8sLDY5",
+  "Protocol": "IPFS-TXT",
+  "Version": "0.1.2",
+  "Content": "QmToUfTKxwXLGoXAGWeeJ7yoeaTkizE67iW8ybYVfdC9tR",
+  "Posted": "2020-05-21T00:14:23.0384851+01:00"
+}
+```

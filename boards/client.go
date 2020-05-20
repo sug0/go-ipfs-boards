@@ -93,9 +93,11 @@ func (c *Client) PutPost(p Post) (string, error) {
 }
 
 func (c *Client) advertise(topic, thread, ref string) {
-    subTopics := append([]string{pubsubPrefix}, strings.Split(topic, "/")...)
-    if thread != "" {
-        subTopics = append(subTopics, thread)
+    var subTopics []string
+    if thread == "" {
+        subTopics = append([]string{pubsubBoardsPrefix}, strings.Split(topic, "/")...)
+    } else {
+        subTopics = []string{pubsubThreadsPrefix, thread}
     }
     for n := 1; n <= len(subTopics); n++ {
         c.shell.PubSubPublish(strings.Join(subTopics[:n], "/"), ref)

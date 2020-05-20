@@ -12,7 +12,8 @@ const (
     protocol = "IPFS-TXT"
     version  = "0.1.2"
 
-    pubsubPrefix = "/" + protocol + "/" + version + "/boards"
+    pubsubBoardsPrefix  = "/" + protocol + "/" + version + "/boards"
+    pubsubThreadsPrefix = "/" + protocol + "/" + version + "/threads"
 )
 
 const (
