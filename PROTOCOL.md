@@ -19,9 +19,10 @@ The post is a JSON object, with the following fields:
 | `Posted` | `string` | `false` | The post date, as an RFC3339Nano time string. |
 | `Extensions` | `object` | `true` | Application defined extensions. |
 
-The character limits of the `Topic`, `Title` and `Content` should be left to the
-text board authority to decide. The `Extensions` field can be used to implement
-domain specific extensions, such as ~~tripfagging~~.
+The character limits of the `Topic`, `Title` and `Content` should application
+dependent. The `Extensions` field can be used to implement
+domain specific extensions, such as ~~tripfagging~~, and perhaps
+the charater limits mentioned earlier.
 
 ### Example OP post
 
