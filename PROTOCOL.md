@@ -2,9 +2,7 @@
 
 This is a textual protocol based on the [JSON](https://www.json.org/) standard.
 Posts are objects comprised of metadata, with a field containing the CID of the
-actual text content published by a user. Optionally, individual textboards may
-choose to validate posts out in the wild, using a cryptographic signature (e.g. RSA)
-of the post content's CID.
+actual text content published by a user.
 
 ## Post format for version `0.1.2`
 
