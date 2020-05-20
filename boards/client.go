@@ -62,30 +62,43 @@ func (c *Client) PutPost(p Post) (string, error) {
     if err != nil {
         return "", err
     }
-    ref, err := c.putContent(p.Content)
-    if err != nil {
-        return "", err
+    if p.Thread != "" {
+        _, _, err = c.shell.BlockStat(p.Thread)
+        if err != nil {
+            err = fmt.Errorf("boards: failed to get thread: %w", err)
+            return "", err
+        }
     }
-    p.Content = ref
+    _, _, err = c.shell.BlockStat(p.Content)
+    if err != nil {
+        ref, err := c.putContent(p.Content)
+        if err != nil {
+            return "", err
+        }
+        p.Content = ref
+    }
     var buf bytes.Buffer
     err = json.NewEncoder(&buf).Encode(&p)
     if err != nil {
         err = fmt.Errorf("boards: failed to encode post into json: %w", err)
         return "", err
     }
-    ref, err = c.shell.Add(&buf)
+    ref, err := c.shell.Add(&buf)
     if err != nil {
         err = fmt.Errorf("boards: failed to add post to ipfs: %w", err)
         return "", err
     }
-    go c.advertise(p.Topic, ref)
+    c.advertise(p.Topic, p.Thread, ref)
     return ref, nil
 }
 
-func (c *Client) advertise(topic, ref string) {
+func (c *Client) advertise(topic, thread, ref string) {
     subTopics := append([]string{pubsubPrefix}, strings.Split(topic, "/")...)
-    for i := 1; i < len(subTopics); i++ {
-        go c.shell.PubSubPublish(strings.Join(subTopics[:i], "/"), ref)
+    if thread != "" {
+        subTopics = append(subTopics, thread)
+    }
+    for n := 1; n <= len(subTopics); n++ {
+        c.shell.PubSubPublish(strings.Join(subTopics[:n], "/"), ref)
     }
 }
 

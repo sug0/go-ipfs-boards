@@ -1,27 +1,38 @@
 package main
 
 import (
-    "fmt"
+    "log"
+    "flag"
 
     "github.com/sug0/go-ipfs-boards/boards"
 )
 
 func main() {
+    var topic string
+    var title string
+    var thread string
+    var content string
+
+    flag.StringVar(&topic, "topic", "", "The topic of the post; equivalent to the board.")
+    flag.StringVar(&title, "title", "", "The title of the post.")
+    flag.StringVar(&thread, "thread", "", "The thread CID, in case of a reply post.")
+    flag.StringVar(&content, "content", "", "The actual content of the post.")
+    flag.Parse()
+
     c, err := boards.NewClient()
     if err != nil {
-        panic(err)
+        log.Fatal(err)
     }
+
     ref, err := c.PutPost(boards.Post{
-        Thread: "QmQx3tUXcjd4YK3xLuWQEaoLu753RU7o4JgDYA4JXKRtSS",
-        Content: "Hello there, I am a test reply! :D",
+        Topic: topic,
+        Title: title,
+        Thread: thread,
+        Content: content,
     })
     if err != nil {
-        panic(err)
+        log.Fatal(err)
     }
-    fmt.Printf("Posted to: %s\n", ref)
-    post, err := c.GetPost(ref)
-    if err != nil {
-        panic(err)
-    }
-    fmt.Printf("%#v\n", post)
+
+    log.Println("Posted to:", ref)
 }

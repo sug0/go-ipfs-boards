@@ -22,12 +22,12 @@ const (
 )
 
 type Post struct {
-    Extensions map[string]interface{}
+    Extensions map[string]interface{} `json:",omitempty"`
+    Topic      string                 `json:",omitempty"`
+    Title      string                 `json:",omitempty"`
+    Thread     string                 `json:",omitempty"`
     Protocol   string
     Version    string
-    Topic      string `json:",omitempty"`
-    Title      string `json:",omitempty"`
-    Thread     string `json:",omitempty"`
     Content    string
     Posted     string
 }
@@ -58,6 +58,7 @@ func (p *Post) validate() error {
     }
 
     // validate content length and other stuff
+    p.Topic = strings.Trim(p.Topic, "/")
     var size int
     for i := 0; i < len(p.Topic); i++ {
         r, n := utf8.DecodeRuneInString(p.Topic[i:])
@@ -74,6 +75,10 @@ func (p *Post) validate() error {
     }
     if utf8.RuneCountInString(p.Title) > titleMaxLen {
         err := fmt.Errorf("boards: title length exceeded %d", titleMaxLen)
+        return err
+    }
+    if p.Content == "" {
+        err := fmt.Errorf("boards: can't post empty content")
         return err
     }
     if utf8.RuneCountInString(p.Content) > contentMaxLen {
