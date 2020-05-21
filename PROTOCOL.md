@@ -48,3 +48,34 @@ the charater limits mentioned earlier.
   "Posted": "2020-05-21T00:14:23.0384851+01:00"
 }
 ```
+
+## Pubsub subsystem
+
+In addition to simply serving files, IPFS can be used as a distributed
+message broker. We take advantage of this subsystem to provide a live feed
+of new posts and threads spawning in the distributed text board.
+
+New threads and replies to these threads will be advertised in their
+respective topics, namely:
+
+* `/IPFS-TXT/0.1.2/boards/<board-topic>` - for new threads
+* `/IPFS-TXT/0.1.2/threads/<thread-cid>` - for replies
+
+In the first case, the payload of the messages will look something
+like this:
+
+```json
+{
+  "Topic": "a",
+  "Ref": "QmUumxXUyEEfPS5kbw1DnWFQwVTt1d9JpAPabDnbSvfVCs"
+}
+```
+
+In the second one, maybe a bit like this:
+
+```json
+{
+  "Thread": "QmUumxXUyEEfPS5kbw1DnWFQwVTt1d9JpAPabDnbSvfVCs",
+  "Ref": "QmQuMUCyGnkYdKs2kckEHumjr3ezpywHNP6655jajMTU6t"
+}
+```
