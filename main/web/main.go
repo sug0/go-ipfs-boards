@@ -147,7 +147,14 @@ func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Param
             if err != nil {
                 continue
             }
-            go wsjson.Write(ctx, c, p)
+            post := struct{
+                Post *boards.Post
+                Ref  string
+            }{
+                Post: p,
+                Ref: adv.Ref,
+            }
+            go wsjson.Write(ctx, c, &post)
         }
     }
 }

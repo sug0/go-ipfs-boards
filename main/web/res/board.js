@@ -7,16 +7,17 @@ let board = boardPath.split('/').slice(2).join('/');
 let ws = new WebSocket('ws://localhost:8989/ws' + boardPath);
 
 ws.onmessage = e => {
-    let post = JSON.parse(e.data);
-    if (!post) return;
+    let postRef = JSON.parse(e.data);
+    if (!postRef) return;
+    let ref = postRef.Ref;
+    let post = postRef.Post;
     let postDiv = document.createElement('div');
     postDiv.id = 'post';
-    let pHeader = document.createElement('h1');
+    let pHeader = document.createElement('a');
     let pDate = new Date(post.Posted);
-    pDate.setUTCHours(pDate.getHours());
-    pDate.setUTCMinutes(pDate.getMinutes());
     pHeader.id = 'post-header';
-    pHeader.innerText = post.Title + ' | ' + pDate.toLocaleString();
+    pHeader.innerHTML = `<span id="post-title">${post.Title}</span><span id="post-date">${pDate.toLocaleString()}</span>`;
+    pHeader.href = '/threads/' + ref;
     let pContent = document.createElement('p');
     pContent.id = 'post-content';
     pContent.innerText = post.Content;
