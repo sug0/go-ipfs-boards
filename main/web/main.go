@@ -39,7 +39,7 @@ func main() {
     http.HandleFunc("/", indexHandler)
     http.HandleFunc("/ws", wsHandler)
 
-    go func () {
+    go func() {
         panic(http.ListenAndServe(":8989", nil))
     }()
     <-sig
