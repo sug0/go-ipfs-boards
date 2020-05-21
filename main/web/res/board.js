@@ -12,8 +12,11 @@ ws.onmessage = e => {
     let postDiv = document.createElement('div');
     postDiv.id = 'post';
     let pHeader = document.createElement('h1');
+    let pDate = new Date(post.Posted);
+    pDate.setUTCHours(pDate.getHours());
+    pDate.setUTCMinutes(pDate.getMinutes());
     pHeader.id = 'post-header';
-    pHeader.innerText = post.Title + ' | ' + post.Posted;
+    pHeader.innerText = post.Title + ' | ' + pDate.toLocaleString();
     let pContent = document.createElement('p');
     pContent.id = 'post-content';
     pContent.innerText = post.Content;
