@@ -1,7 +1,6 @@
 package main
 
 import (
-    "io"
     "os"
     "log"
     "net/http"
@@ -16,58 +15,12 @@ import (
     "github.com/sug0/go-ipfs-boards/gossip"
 )
 
-const boardsIndexPage = `<html>
-    <head>
-        <title>aew mermaum</title>
-        <meta charset="utf8"/>
-    </head>
-    <body>
-        <div id="new-thread">
-            <textarea id="post-title" rows="1" cols="80"></textarea><br/>
-            <textarea id="post-content" rows="7" cols="80"></textarea><br/>
-            <button id="post-submit">submit</button>
-        </div>
-        <div id="threads"></div>
-        <script type="application/javascript">
-            let postTitle = document.getElementById('post-title');
-            let postContent = document.getElementById('post-content');
-            let postSubmit = document.getElementById('post-submit');
-            let threads = document.getElementById('threads');
-            let boardPath = window.location.pathname;
-            let board = boardPath.split('/').slice(2).join('/');
-            let ws = new WebSocket('ws://localhost:8989/ws' + boardPath);
-            ws.onmessage = e => {
-                let post = JSON.parse(e.data);
-                if (!post) return;
-                let postDiv = document.createElement('div');
-                postDiv.id = 'post';
-                let pHeader = document.createElement('h1');
-                pHeader.id = 'post-header';
-                pHeader.innerText = post.Title + ' | ' + post.Posted;
-                let pContent = document.createElement('p');
-                pContent.id = 'post-content';
-                pContent.innerText = post.Content;
-                postDiv.appendChild(pHeader);
-                postDiv.appendChild(pContent);
-                threads.appendChild(postDiv);
-            };
-            postSubmit.onclick = e => {
-                ws.send(JSON.stringify({
-                    Topic: board,
-                    Title: postTitle.value,
-                    Content: postContent.value
-                }));
-            };
-        </script>
-        <style>
-        </style>
-    </body>
-</html>`
-
 var (
     postGossip *gossip.Gossip
     client     *boards.Client
 )
+
+//go:generate go run generate/resources.go
 
 func main() {
     var err error
@@ -87,6 +40,11 @@ func main() {
     signal.Notify(sig, os.Interrupt)
 
     router := httprouter.New()
+    router.GET("/", indexHandler)
+    router.GET("/board.js", boardScriptHandler)
+    router.GET("/board.css", boardStyleHandler)
+    router.GET("/thread.js", threadScriptHandler)
+    router.GET("/thread.css", threadStyleHandler)
     router.GET("/boards/*board", boardsHandler)
     router.GET("/threads/:thread", threadsHandler)
     router.GET("/ws/boards/*board", wsHandlerBoards)
@@ -98,8 +56,32 @@ func main() {
     <-sig
 }
 
+func indexHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    http.Redirect(w, r, "/boards/random", http.StatusSeeOther)
+}
+
+func boardScriptHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Write(boardScript)
+}
+
+func boardStyleHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Write(boardStyle)
+}
+
 func boardsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    io.WriteString(w, boardsIndexPage)
+    w.Write(boardsIndexPage)
+}
+
+func threadScriptHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Write(threadScript)
+}
+
+func threadStyleHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Write(threadStyle)
+}
+
+func threadsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Write(threadsIndexPage)
 }
 
 func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -160,10 +142,6 @@ func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Param
             go wsjson.Write(ctx, c, p)
         }
     }
-}
-
-func threadsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    // nothing
 }
 
 func wsHandlerThreads(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
