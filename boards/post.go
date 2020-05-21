@@ -9,14 +9,6 @@ import (
 )
 
 const (
-    protocol = "IPFS-TXT"
-    version  = "0.1.2"
-
-    pubsubBoardsPrefix  = "/" + protocol + "/" + version + "/boards"
-    pubsubThreadsPrefix = "/" + protocol + "/" + version + "/threads"
-)
-
-const (
     topicMaxLen   = 64
     titleMaxLen   = 256
     contentMaxLen = 1024
@@ -63,6 +55,10 @@ func (p *Post) validate() error {
     var size int
     for i := 0; i < len(p.Topic); i++ {
         r, n := utf8.DecodeRuneInString(p.Topic[i:])
+        if r == '"' || r == '\'' {
+            err := fmt.Errorf("boards: invalid char in topic")
+            return err
+        }
         if unicode.IsSpace(r) {
             err := fmt.Errorf("boards: topic mustn't contain spaces")
             return err

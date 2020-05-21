@@ -93,14 +93,26 @@ func (c *Client) PutPost(p Post) (string, error) {
 }
 
 func (c *Client) advertise(topic, thread, ref string) {
-    var subTopics []string
     if thread == "" {
-        subTopics = append([]string{pubsubBoardsPrefix}, strings.Split(topic, "/")...)
+        c.advertiseNewThread(topic, ref)
     } else {
-        subTopics = []string{pubsubThreadsPrefix, thread}
+        c.advertiseNewPost(thread, ref)
     }
+}
+
+func (c *Client) advertiseNewThread(topic, ref string) {
+    subTopics := append([]string{PubsubThreadsPrefix}, strings.Split(topic, "/")...)
     for n := 1; n <= len(subTopics); n++ {
-        c.shell.PubSubPublish(strings.Join(subTopics[:n], "/"), ref)
+        payload := fmt.Sprintf(`{"Topic":"%s","Ref":"%s"}`, topic, ref)
+        c.shell.PubSubPublish(strings.Join(subTopics[:n], "/"), payload)
+    }
+}
+
+func (c *Client) advertiseNewPost(thread, ref string) {
+    subTopics := []string{PubsubPostsPrefix, thread}
+    for n := 1; n <= len(subTopics); n++ {
+        payload := fmt.Sprintf(`{"Thread":"%s","Ref":"%s"}`, thread, ref)
+        c.shell.PubSubPublish(strings.Join(subTopics[:n], "/"), payload)
     }
 }
 
