@@ -51,9 +51,17 @@ func main() {
     router.GET("/ws/threads/:thread", wsHandlerThreads)
 
     go func() {
-        log.Fatal(http.ListenAndServe(":8989", router))
+        log.Fatal(http.ListenAndServe(":8989", loggingMiddleware(router)))
     }()
     <-sig
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+    handler := func(w http.ResponseWriter, r *http.Request) {
+        log.Printf("%s\t%s\t%s\n", r.RemoteAddr, r.Method, r.RequestURI)
+        next.ServeHTTP(w, r)
+    }
+    return http.HandlerFunc(handler)
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
