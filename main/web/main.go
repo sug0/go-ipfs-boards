@@ -87,7 +87,8 @@ func boardsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 
 func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    if ps.ByName("board") == "/" {
+    board := ps.ByName("board")
+    if board == "/" {
         http.Error(w, "not a board", http.StatusBadRequest)
         return
     }
@@ -97,7 +98,7 @@ func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Param
         return
     }
     defer c.Close(websocket.StatusNormalClosure, "bye")
-    board := ps.ByName("board")[1:]
+    board = board[1:]
     err = postGossip.AddBoardWhitelist(board)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
