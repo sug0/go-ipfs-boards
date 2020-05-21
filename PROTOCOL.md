@@ -79,3 +79,16 @@ In the second one, maybe a bit like this:
   "Ref": "QmQuMUCyGnkYdKs2kckEHumjr3ezpywHNP6655jajMTU6t"
 }
 ```
+
+Additionally, in each case, publish requests will be mirrored
+throughout the whole hierarchy of the topic; for instance, a
+post to:
+
+    /IPFS-TXT/0.1.2/boards/my/secret/board
+
+Would get mirrored to the following topics:
+
+    /IPFS-TXT/0.1.2/boards
+    /IPFS-TXT/0.1.2/boards/my
+    /IPFS-TXT/0.1.2/boards/my/secret
+    /IPFS-TXT/0.1.2/boards/my/secret/board
