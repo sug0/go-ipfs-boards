@@ -12,7 +12,7 @@ The post is a JSON object, with the following fields:
 | :--- | :---: | :---: | :--- |
 | `Protocol` | `string` | `false` | Constant value `IPFS-TXT`. |
 | `Version` | `string` | `false` | The protocol version. |
-| `Topic` | `string` | `true` | Analogous to the board, in other software; formmated in UTF-8. Required if OP. |
+| `Topic` | `string` | `true` | Analogous to the board, in other software; formatted in UTF-8. Required if OP. |
 | `Title` | `string` | `true` | The title of the OP, formatted in UTF-8. Required if OP. |
 | `Thread` | `string` | `true` | The thread being replied to. Required if not OP. |
 | `Content` | `string` | `false` | The content ID hash pointing to the post's text formatted in UTF-8. |
