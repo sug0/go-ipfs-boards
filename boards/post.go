@@ -92,7 +92,7 @@ func (p *Post) validate() error {
 }
 
 func timeNow() string {
-    return time.Now().Format(time.RFC3339Nano)
+    return time.Now().UTC().Format(time.RFC3339Nano)
 }
 
 //func timeParse(t string) (time.Time, error) {
