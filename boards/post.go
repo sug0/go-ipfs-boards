@@ -55,7 +55,7 @@ func (p *Post) validate() error {
     var size int
     for i := 0; i < len(p.Topic); i++ {
         r, n := utf8.DecodeRuneInString(p.Topic[i:])
-        if r == '"' || r == '\'' {
+        if r == '"' || r == '\'' || r == '*' {
             err := fmt.Errorf("boards: invalid char in topic")
             return err
         }

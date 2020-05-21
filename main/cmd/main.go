@@ -53,15 +53,23 @@ func snoopPosts() {
         log.Fatal(err)
     }
     defer g.Close()
+    err = g.AddBoardWhitelist("*")
+    if err != nil {
+        log.Fatal(err)
+    }
+    err = g.AddThreadWhitelist("*")
+    if err != nil {
+        log.Fatal(err)
+    }
     quit := make(chan os.Signal, 1)
     signal.Notify(quit, os.Interrupt)
     for {
         select {
         case <-quit:
             return
-        case a := <-g.NextThread():
+        case a := <-g.Threads():
             log.Printf("New thread: %s: On topic: %s\n", a.Ref, a.Topic)
-        case a := <-g.NextPost():
+        case a := <-g.Posts():
             log.Printf("New post: %s: On thread: %s\n", a.Ref, a.Thread)
         }
     }
