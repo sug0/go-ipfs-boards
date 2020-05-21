@@ -22,11 +22,20 @@ const boardsIndexPage = `<html>
         <meta charset="utf8"/>
     </head>
     <body>
-        <div id="threads"/>
+        <div id="new-thread">
+            <textarea id="post-title" rows="1" cols="80"></textarea><br/>
+            <textarea id="post-content" rows="7" cols="80"></textarea><br/>
+            <button id="post-submit">submit</button>
+        </div>
+        <div id="threads"></div>
         <script type="application/javascript">
+            let postTitle = document.getElementById('post-title');
+            let postContent = document.getElementById('post-content');
+            let postSubmit = document.getElementById('post-submit');
             let threads = document.getElementById('threads');
-            let board = window.location.pathname;
-            let ws = new WebSocket('ws://localhost:8989/ws' + board);
+            let boardPath = window.location.pathname;
+            let board = boardPath.split('/').slice(2).join('/');
+            let ws = new WebSocket('ws://localhost:8989/ws' + boardPath);
             ws.onmessage = e => {
                 let post = JSON.parse(e.data);
                 if (!post) return;
@@ -41,6 +50,13 @@ const boardsIndexPage = `<html>
                 postDiv.appendChild(pHeader);
                 postDiv.appendChild(pContent);
                 threads.appendChild(postDiv);
+            };
+            postSubmit.onclick = e => {
+                ws.send(JSON.stringify({
+                    Topic: board,
+                    Title: postTitle.value,
+                    Content: postContent.value
+                }));
             };
         </script>
         <style>
@@ -108,18 +124,40 @@ func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 
     // the parent context
     ctx := r.Context()
-    closeCtx := c.CloseRead(ctx)
+
+    // receive posts
+    type newPost struct {
+        ok   bool
+        post boards.Post
+    }
+    posts := make(chan newPost)
+    go func() {
+        for {
+            var p newPost
+            err := wsjson.Read(ctx, c, &p.post)
+            if err != nil {
+                p.ok = false
+                posts <- p
+                return
+            }
+            p.ok = true
+            posts <- p
+        }
+    }()
 
     for {
         select {
-        case <-closeCtx.Done():
-            return
+        case p := <-posts:
+            if !p.ok {
+                return
+            }
+            go client.PutPost(p.post)
         case adv := <-postGossip.Threads():
             p, err := client.GetPost(adv.Ref)
             if err != nil {
                 continue
             }
-            wsjson.Write(ctx, c, p)
+            go wsjson.Write(ctx, c, p)
         }
     }
 }
