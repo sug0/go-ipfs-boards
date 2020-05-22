@@ -40,14 +40,14 @@ func advertise(sub *ipfs.PubSubSubscription, advertChan chan<- Advertisement) {
 func (g *Gossip) AddBoardWhitelist(board string) error {
     g.boardsMux.Lock()
     defer g.boardsMux.Unlock()
+    if _, ok := g.boardsMap[board]; ok {
+        return nil
+    }
     var topic string
     if board == "*" {
         topic = boards.PubsubThreadsPrefix
     } else {
         topic = boards.PubsubThreadsPrefix + "/" + board
-    }
-    if _, ok := g.boardsMap[board]; ok {
-        return nil
     }
     sub, err := g.shell.PubSubSubscribe(topic)
     if err != nil {
@@ -62,14 +62,14 @@ func (g *Gossip) AddBoardWhitelist(board string) error {
 func (g *Gossip) AddThreadWhitelist(thread string) error {
     g.threadsMux.Lock()
     defer g.threadsMux.Unlock()
+    if _, ok := g.threadsMap[thread]; ok {
+        return nil
+    }
     var topic string
     if thread == "*" {
         topic = boards.PubsubPostsPrefix
     } else {
         topic = boards.PubsubPostsPrefix + "/" + thread
-    }
-    if _, ok := g.threadsMap[thread]; ok {
-        return nil
     }
     sub, err := g.shell.PubSubSubscribe(topic)
     if err != nil {
