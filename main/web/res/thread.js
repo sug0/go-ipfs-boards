@@ -39,5 +39,6 @@ replyboxSubmit.onclick = e => {
         Thread: thread,
         Content: replyboxContent.value
     }));
+    replyboxContent.value = '';
 };
 

@@ -36,4 +36,6 @@ replyboxSubmit.onclick = e => {
         Title: replyboxTitle.value,
         Content: replyboxContent.value
     }));
+    replyboxTitle.value = '';
+    replyboxContent.value = '';
 };
