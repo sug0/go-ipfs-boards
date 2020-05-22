@@ -38,39 +38,45 @@ func advertise(sub *ipfs.PubSubSubscription, advertChan chan<- Advertisement) {
 }
 
 func (g *Gossip) AddBoardWhitelist(board string) error {
+    g.boardsMux.Lock()
+    defer g.boardsMux.Unlock()
     var topic string
     if board == "*" {
         topic = boards.PubsubThreadsPrefix
     } else {
         topic = boards.PubsubThreadsPrefix + "/" + board
     }
+    if _, ok := g.boardsMap[board]; ok {
+        return nil
+    }
     sub, err := g.shell.PubSubSubscribe(topic)
     if err != nil {
         err = fmt.Errorf("gossip: failed to sub to board: %w", err)
         return err
     }
-    g.boardsMux.Lock()
     g.boardsMap[board] = sub
-    g.boardsMux.Unlock()
     go advertise(sub, g.boards)
     return nil
 }
 
 func (g *Gossip) AddThreadWhitelist(thread string) error {
+    g.threadsMux.Lock()
+    defer g.threadsMux.Unlock()
     var topic string
     if thread == "*" {
         topic = boards.PubsubPostsPrefix
     } else {
         topic = boards.PubsubPostsPrefix + "/" + thread
     }
+    if _, ok := g.threadsMap[thread]; ok {
+        return nil
+    }
     sub, err := g.shell.PubSubSubscribe(topic)
     if err != nil {
         err = fmt.Errorf("gossip: failed to sub to thread: %w", err)
         return err
     }
-    g.threadsMux.Lock()
     g.threadsMap[thread] = sub
-    g.threadsMux.Unlock()
     go advertise(sub, g.threads)
     return nil
 }
