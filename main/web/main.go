@@ -65,14 +65,16 @@ func loggingMiddleware(next http.Handler) http.Handler {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    http.Redirect(w, r, "/boards/random", http.StatusSeeOther)
+    http.Redirect(w, r, "/boards/newfag", http.StatusSeeOther)
 }
 
 func boardScriptHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Header().Set("Content-Type", "application/javascript")
     w.Write(boardScript)
 }
 
 func boardStyleHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Header().Set("Content-Type", "text/css")
     w.Write(boardStyle)
 }
 
@@ -81,10 +83,12 @@ func boardsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 
 func threadScriptHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Header().Set("Content-Type", "application/javascript")
     w.Write(threadScript)
 }
 
 func threadStyleHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    w.Header().Set("Content-Type", "text/css")
     w.Write(threadStyle)
 }
 
@@ -143,6 +147,9 @@ func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Param
             }
             go client.PutPost(p.post)
         case adv := <-postGossip.Threads():
+            if adv.Topic != board {
+                continue
+            }
             p, err := client.GetPost(adv.Ref)
             if err != nil {
                 continue
@@ -160,5 +167,85 @@ func wsHandlerBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 }
 
 func wsHandlerThreads(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    // nothing
+    thread := ps.ByName("thread")
+    c, err := websocket.Accept(w, r, &websocket.AcceptOptions{InsecureSkipVerify: true})
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer c.Close(websocket.StatusNormalClosure, "bye")
+    err = postGossip.AddThreadWhitelist(thread)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer postGossip.DelThreadWhitelist(thread)
+
+    // the parent context
+    ctx := r.Context()
+
+    // receive posts
+    type newPost struct {
+        ok   bool
+        post boards.Post
+    }
+    posts := make(chan newPost)
+    go func() {
+        for {
+            var p newPost
+            err := wsjson.Read(ctx, c, &p.post)
+            if err != nil {
+                p.ok = false
+                posts <- p
+                return
+            }
+            p.ok = true
+            posts <- p
+        }
+    }()
+
+    // write op post first
+    p, err := client.GetPost(thread)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    post := struct{
+        Op   bool
+        Ref  string
+        Post *boards.Post
+    }{
+        Op: true,
+        Ref: thread,
+        Post: p,
+    }
+    go wsjson.Write(ctx, c, &post)
+
+    for {
+        select {
+        case p := <-posts:
+            if !p.ok {
+                return
+            }
+            go client.PutPost(p.post)
+        case adv := <-postGossip.Posts():
+            if adv.Thread != thread {
+                continue
+            }
+            p, err := client.GetPost(adv.Ref)
+            if err != nil {
+                continue
+            }
+            post := struct{
+                Op   bool
+                Ref  string
+                Post *boards.Post
+            }{
+                Op: false,
+                Ref: adv.Ref,
+                Post: p,
+            }
+            go wsjson.Write(ctx, c, &post)
+        }
+    }
 }

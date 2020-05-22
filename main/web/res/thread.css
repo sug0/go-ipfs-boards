@@ -40,7 +40,7 @@ textarea {
 }
 
 #header {
-    font-size: larger;
+    font-size: smaller;
     background: #6ea6b7;
     background-image: linear-gradient(to top, #6ea6b7, #81c0d0);
     background-size: 100%;

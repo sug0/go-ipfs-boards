@@ -1,10 +1,14 @@
-let postTitle = document.getElementById('post-title');
-let postContent = document.getElementById('post-content');
-let postSubmit = document.getElementById('post-submit');
+let header = document.getElementById('header');
+let replyboxTitle = document.getElementById('replybox-title');
+let replyboxContent = document.getElementById('replybox-content');
+let replyboxSubmit = document.getElementById('replybox-submit');
 let threads = document.getElementById('threads');
 let boardPath = window.location.pathname;
 let board = boardPath.split('/').slice(2).join('/');
 let ws = new WebSocket('ws://localhost:8989/ws' + boardPath);
+
+header.innerText = `Board - ${board}`;
+document.title = `Board - ${board}`;
 
 ws.onmessage = e => {
     let postRef = JSON.parse(e.data);
@@ -12,24 +16,24 @@ ws.onmessage = e => {
     let ref = postRef.Ref;
     let post = postRef.Post;
     let postDiv = document.createElement('div');
-    postDiv.id = 'post';
+    postDiv.className = 'post';
     let pHeader = document.createElement('a');
     let pDate = new Date(post.Posted);
-    pHeader.id = 'post-header';
-    pHeader.innerHTML = `<span id="post-title">${post.Title}</span><span id="post-date">${pDate.toLocaleString()}</span>`;
+    pHeader.className = 'post-header';
+    pHeader.innerHTML = `<span class="post-title">${post.Title}</span><span class="post-date">${pDate.toLocaleString()}</span>`;
     pHeader.href = '/threads/' + ref;
     let pContent = document.createElement('p');
-    pContent.id = 'post-content';
+    pContent.className = 'post-content';
     pContent.innerText = post.Content;
     postDiv.appendChild(pHeader);
     postDiv.appendChild(pContent);
     threads.appendChild(postDiv);
 };
 
-postSubmit.onclick = e => {
+replyboxSubmit.onclick = e => {
     ws.send(JSON.stringify({
         Topic: board,
-        Title: postTitle.value,
-        Content: postContent.value
+        Title: replyboxTitle.value,
+        Content: replyboxContent.value
     }));
 };
