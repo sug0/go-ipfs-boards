@@ -80,7 +80,32 @@ In the second one, maybe a bit like this:
 }
 ```
 
-Additionally, in each case, publish requests will be mirrored
+Additionally, peers may keep an index of posts they have received,
+which are broadcast on the following topic:
+
+* `/IPFS-TXT/0.1.2/sync`
+
+The payload would take the following form:
+
+```json
+[
+  {
+    "Thread": "<cid>",
+    "Posts": [
+      {
+        "Ref": "<cid>"
+      },
+      ...
+    ]
+  },
+  ...
+]
+```
+
+Once received, clients would update their post index. A client may choose
+to save this index somewhere in their local storage, or even in their IPNS.
+
+Finally, in each case, publish requests will be mirrored
 throughout the whole hierarchy of the topic; for instance, a
 post to:
 
