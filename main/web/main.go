@@ -3,6 +3,7 @@ package main
 import (
     "os"
     "log"
+    "sync"
     "net/http"
     "os/signal"
 
@@ -13,12 +14,20 @@ import (
 
     "github.com/sug0/go-ipfs-boards/boards"
     "github.com/sug0/go-ipfs-boards/gossip"
+    "github.com/sug0/go-ipfs-boards/storage"
 )
 
 var (
     postGossip *gossip.Gossip
     client     *boards.Client
+
+    storageH *storageHandler
 )
+
+type storageHandler struct {
+    threadsMux sync.RWMutex
+    threads    storage.Threads
+}
 
 //go:generate go run generate/resources.go
 
@@ -35,6 +44,10 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
+
+    storageH = newStorageHandler()
+    go storageH.gossipThreads()
+    go storageH.saveThreads()
 
     sig := make(chan os.Signal, 1)
     signal.Notify(sig, os.Interrupt)
@@ -54,6 +67,24 @@ func main() {
         log.Fatal(http.ListenAndServe(":8989", loggingMiddleware(router)))
     }()
     <-sig
+}
+
+func newStorageHandler() *storageHandler {
+    return &storageHandler{
+        threads: make(storage.Threads),
+    }
+}
+
+func (s *storageHandler) gossipThreads() {
+    // TODO
+}
+
+func (s *storageHandler) saveThreads() {
+    // TODO
+}
+
+func (s *storageHandler) addPost(threaCid, postCid string) {
+    // TODO
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
