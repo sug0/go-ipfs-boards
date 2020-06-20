@@ -33,9 +33,16 @@ func (c *Client) AdvertiseThreads(threads map[string][]string) {
     if len(threads) == 0 {
         return
     }
-    var buf strings.Builder
-    json.NewEncoder(&buf).Encode(threads)
-    c.shell.PubSubPublish(PubsubSyncThreads, buf.String())
+    var buf bytes.Buffer
+    err := json.NewEncoder(&buf).Encode(threads)
+    if err != nil {
+        return
+    }
+    ref, err := c.shell.Add(&buf)
+    if err != nil {
+        return
+    }
+    c.shell.PubSubPublish(PubsubSyncThreads, ref)
 }
 
 func (c *Client) GetPost(ref string) (*Post, error) {

@@ -85,7 +85,7 @@ which are broadcast on the following topic:
 
 * `/IPFS-TXT/0.1.3/sync`
 
-The payload would take the following form:
+The payload is a CID referencing data in the form:
 
 ```json
 {
@@ -96,7 +96,7 @@ The payload would take the following form:
 }
 ```
 
-Once received, clients would update their post index. A client may choose
+Once received, clients would update their index of posts. A client may choose
 to save this index somewhere in their local storage, or even in their IPNS.
 
 Finally, in each case, publish requests will be mirrored
