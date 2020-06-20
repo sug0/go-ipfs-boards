@@ -88,18 +88,12 @@ which are broadcast on the following topic:
 The payload would take the following form:
 
 ```json
-[
-  {
-    "Thread": "<cid>",
-    "Posts": [
-      {
-        "Ref": "<cid>"
-      },
-      ...
-    ]
-  },
-  ...
-]
+{
+  "<thread cid>": [
+    "<post 1 cid >",
+    "<post 2 cid"
+  ]
+}
 ```
 
 Once received, clients would update their post index. A client may choose

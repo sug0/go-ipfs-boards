@@ -6,4 +6,6 @@ const (
 
     PubsubThreadsPrefix = "/" + protocol + "/" + version + "/boards"
     PubsubPostsPrefix   = "/" + protocol + "/" + version + "/threads"
+
+    PubsubSyncThreads = "/" + protocol + "/" + version + "/sync"
 )

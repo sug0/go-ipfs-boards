@@ -29,6 +29,15 @@ func drainReader(r io.ReadCloser) {
     r.Close()
 }
 
+func (c *Client) AdvertiseThreads(threads map[string][]string) {
+    if len(threads) == 0 {
+        return
+    }
+    var buf strings.Builder
+    json.NewEncoder(&buf).Encode(threads)
+    c.shell.PubSubPublish(PubsubSyncThreads, buf.String())
+}
+
 func (c *Client) GetPost(ref string) (*Post, error) {
     r, err := c.shell.Cat(ref)
     if err != nil {

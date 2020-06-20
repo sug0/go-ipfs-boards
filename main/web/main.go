@@ -4,6 +4,8 @@ import (
     "os"
     "log"
     "sync"
+    "time"
+    "math/rand"
     "net/http"
     "os/signal"
 
@@ -14,40 +16,54 @@ import (
 
     "github.com/sug0/go-ipfs-boards/boards"
     "github.com/sug0/go-ipfs-boards/gossip"
-    "github.com/sug0/go-ipfs-boards/storage"
+    "github.com/sug0/go-ipfs-boards/storage/boltstorage"
+    "github.com/sug0/go-ipfs-boards/storage/storagehandler"
 )
 
 var (
     postGossip *gossip.Gossip
     client     *boards.Client
 
-    storageH *storageHandler
+    storageH *storagehandler.StorageHandler
 )
 
-type storageHandler struct {
-    threadsMux sync.RWMutex
-    threads    storage.Threads
-}
-
 //go:generate go run generate/resources.go
+
+func init() {
+    rand.Seed(time.Now().UnixNano())
+}
 
 func main() {
     var err error
 
     postGossip, err = gossip.NewGossip()
     if err != nil {
-        log.Fatal(err)
+        panic(err)
     }
     defer postGossip.Close()
 
     client, err = boards.NewClient()
     if err != nil {
-        log.Fatal(err)
+        panic(err)
     }
 
-    storageH = newStorageHandler()
-    go storageH.gossipThreads()
-    go storageH.saveThreads()
+    st, err := boltstorage.Open(
+    if err != nil {
+        panic(err)
+    }
+    defer st.Close()
+
+    storageH, err = storagehandler.NewStorageHandler(st)
+    if err != nil {
+        panic(err)
+    }
+    defer storageH.Close()
+
+    go func() {
+        delta := time.Duration(rand.Int() & 0xf)
+        time.Sleep((30 + delta) * time.Second)
+        client.AdvertiseThreads(storageH.Threads())
+    }()
 
     sig := make(chan os.Signal, 1)
     signal.Notify(sig, os.Interrupt)
@@ -64,27 +80,9 @@ func main() {
     router.GET("/ws/threads/:thread", wsHandlerThreads)
 
     go func() {
-        log.Fatal(http.ListenAndServe(":8989", loggingMiddleware(router)))
+        panic(http.ListenAndServe(":8989", loggingMiddleware(router)))
     }()
     <-sig
-}
-
-func newStorageHandler() *storageHandler {
-    return &storageHandler{
-        threads: make(storage.Threads),
-    }
-}
-
-func (s *storageHandler) gossipThreads() {
-    // TODO
-}
-
-func (s *storageHandler) saveThreads() {
-    // TODO
-}
-
-func (s *storageHandler) addPost(threaCid, postCid string) {
-    // TODO
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
