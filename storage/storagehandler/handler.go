@@ -38,7 +38,7 @@ type threadState struct {
 func NewStorageHandler(s storage.Storage) (*StorageHandler, error) {
     threads, err := s.LoadAll()
     if err != nil {
-        err = fmt.Errof("handler: failed to read threads: %w", err)
+        err = fmt.Errorf("handler: failed to read threads: %w", err)
         return nil, err
     }
     state := make(map[string]*threadState, len(threads))
@@ -53,7 +53,7 @@ func NewStorageHandler(s storage.Storage) (*StorageHandler, error) {
         localStorage: state,
     }
     go h.saveStorageService()
-    return h
+    return h, nil
 }
 
 func (h *StorageHandler) Append(thread string, post string) {
@@ -61,7 +61,7 @@ func (h *StorageHandler) Append(thread string, post string) {
     ts := h.localStorage[thread]
     if ts == nil {
         ts = &threadState{}
-        h.localStorage = ts
+        h.localStorage[thread] = ts
     }
     ts.posts = append(ts.posts, post)
     ts.state = toBeSavedStorage

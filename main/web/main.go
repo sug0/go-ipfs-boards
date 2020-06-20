@@ -3,7 +3,6 @@ package main
 import (
     "os"
     "log"
-    "sync"
     "time"
     "math/rand"
     "net/http"
@@ -47,7 +46,7 @@ func main() {
         panic(err)
     }
 
-    st, err := boltstorage.Open(
+    st, err := boltstorage.Open("posts.db", 0644, nil)
     if err != nil {
         panic(err)
     }
@@ -265,6 +264,7 @@ func wsHandlerThreads(w http.ResponseWriter, r *http.Request, ps httprouter.Para
             if err != nil {
                 continue
             }
+            storageH.Append(p.Thread, adv.Ref)
             post := struct{
                 Op   bool
                 Ref  string
