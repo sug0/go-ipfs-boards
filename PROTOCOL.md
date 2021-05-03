@@ -17,6 +17,7 @@ The post is a JSON object, with the following fields:
 | `Thread` | `string` | `true` | The thread being replied to. Required if not OP. |
 | `Content` | `string` | `false` | The content ID hash pointing to the post's text formatted in UTF-8. |
 | `Posted` | `string` | `false` | The post date, as an RFC3339Nano UTC time string. |
+| `Last` | `string` | `true` | The content ID of the last known post in the same thread. |
 | `Extensions` | `object` | `true` | Application defined extensions. |
 
 The character limits of the `Topic`, `Title` and `Content` should be application
